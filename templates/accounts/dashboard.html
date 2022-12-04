@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %} | Dashboard {% endblock %}
+
+{% block content %}
+
+{% load humanize %}
+
+{% load static %}
+
+
+<div class="sub-banner overview-bgi">
+    <div class="container breadcrumb-area">
+        <div class="breadcrumb-areas">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumbs">
+                <li><a href="{%url 'home' %}">Home</a></li>
+                <li class="active">{{user.first_name}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% include 'includes/messages.html' %}
+
+
+<div class="contact-2 content-area-5">
+    <div class="container">
+        <div class="main-title" style="text-align:left !important;">
+            <h1>Welcome <span>{{user.first_name}}</span></h1>
+        </div>
+        {% if is_vendor %}
+        <div>
+            <div class="container mt-50 mb-50">
+                <div class="main-title text-center"><h1>Booking <span>History</span></h1></div>
+                {% if payments %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Service Name</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Event Date</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.title }}</td>
+                            <td>{{ payment.user.username }}</td>
+                            <td>{{ payment.phone }}</td>
+                            <td>{{ payment.city}}</td>
+                            <td>₹{{ payment.amount | intcomma }}</td>
+                            <td>{{ payment.event_date.date}}</td>
+                            <td><a href="{% url 'delete_order' payment.id %}" class="btn btn-outline-dark">Cancel</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h4> You have no booking history !</h4>
+                {% endif %}
+            </div>
+            <div class="main-title text-center">
+                <h1>Add <span>Service</span></h1>
+                <p>Kindly enter your business details to add your services.</p>
+            </div>
+            <form method="POST" action="{% url 'add_service' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+
+                            <input type="hidden" name="vendor_id" class="form-control" value="{{user.id}}" required>
+
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="text" name="title" class="form-control" placeholder="Title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group email">
+                                    <input type="text" name="service_type" class="form-control"
+                                        value="{{vendor.service_type}}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group city">
+                                    <input type="text" name="city" class="form-control" placeholder="City" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group">
+                                    <select class="form-control search-fields" name="state">
+                                        <option selected="true" disabled="disabled">Select State </option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Maharastra">Maharastra</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="file" name="service_photo" class="form-control" required>
+                                    <input type="file" name="service_photo_1" class="form-control" required>
+                                    <input type="file" name="service_photo_2" class="form-control" required>
+                                    <input type="file" name="service_photo_3" class="form-control" required>
+                                    <input type="file" name="service_photo_4" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="text" name="featured_package_price" class="form-control"
+                                        placeholder="Price" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group message">
+                                    <textarea class="form-control" name="description"
+                                        placeholder="Write description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group message">
+                                    <textarea class="form-control" name="other_details"
+                                        placeholder="Write other details"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="send-btn text-center">
+                                    <button type="submit" class="btn btn-md button-theme">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="container mt-50 mb-50">
+            <div class="main-title text-center"><h1>Booking <span>History</span></h1></div>
+            {% if payments %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Service Name</th>
+                            <th scope="col">Vendor</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Booking Date</th>
+                            <th scope="col">Event Date</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.title }}</td>
+                            <td>{{ payment.vendor.username }}</td>
+                            <td>{{ payment.city}}</td>
+                            <td>₹{{ payment.amount | intcomma }}</td>
+                            <td>{{ payment.created_date.date}}</td>
+                            <td>{{ payment.event_date.date}}</td>
+                            <td><a href="{% url 'delete_order' payment.id %}" class="btn btn-outline-dark">Cancel</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        
+            {% else %}
+                <h4> You have no booking history !</h4>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
