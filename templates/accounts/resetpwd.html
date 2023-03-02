@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} | Login  {% endblock %}
+{% block title %} | Reset Password  {% endblock %}
 
 {% block content %}
 
@@ -10,10 +10,10 @@
 <div class="sub-banner overview-bgi">
     <div class="container breadcrumb-area">
         <div class="breadcrumb-areas">
-            <h1>Login To Your Account</h1>
+            <h1>Reset Password</h1>
             <ul class="breadcrumbs">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li class="active">Login</li>
+                <li class="active">Reset Password</li>
             </ul>
         </div>
     </div>
@@ -24,24 +24,19 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="form-section">
-                    <h3>Sign into your account</h3>
+                    <h3>Reset Password</h3>
                     {% include 'includes/messages.html' %}
-                    <form action="{% url 'login' %}" method="POST">
+                    <form action="{% url 'resetpwd' %}" method="POST">
                         {% csrf_token %}
                         <div class="form-group form-box">
-                            <input type="text" name="username" class="input-text" placeholder="Username" required>
-                            <i class="flaticon-user"></i>
-                        </div>
-                        <div class="form-group form-box">
-                            <input type="password" name="password" class="input-text" placeholder="Password" required>
-                            <i class="flaticon-lock"></i>
+                            <input type="text" name="email" class="input-text" placeholder="Email Address" required>
+                            <i class="flaticon-mail"></i>
                         </div>
                         <div class="form-group mb-0 clearfix">
-                            <button type="submit" class="btn-md btn-theme float-left">Login</button>
+                            <button type="submit" class="btn-md btn-theme float-left">Reset</button>
                         </div>
                     </form>
                     <br><p>Don't have an account? <a href="{% url 'register' %}"> Register here</a></p>
-                    <br><p>Forgot password? <a href="{% url 'resetpwd' %}"> Reset password here</a></p>
                 </div>
             </div>
         </div>

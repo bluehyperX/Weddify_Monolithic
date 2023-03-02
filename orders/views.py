@@ -3,7 +3,9 @@ from datetime import date
 from django.utils.timezone import utc
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
+import requests
 from .models import Order
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -29,13 +31,14 @@ def payment(request):
                 messages.error(request, 'This service is already booked!')
                 return redirect('dashboard')
         
-
         order = Order(service_id=service_id, title=title, user_id=user_id, vendor_id=vendor_id, first_name=first_name,
         last_name=last_name, city=city, state=state, email=email, phone=phone, 
         amount=amount, event_date=event_date)
 
         order.save()
         messages.success(request, 'Thankyou for booking. we will get back to you soon !')
+        UserDict={"firstname":first_name, "lastname":last_name, "email":email, "username":"", "servicetitle":title}
+        r=requests.post('http://localhost:8080/book', json=UserDict)
         return redirect('/services/'+service_id)
 
 def delete_order(request, id):
@@ -46,8 +49,10 @@ def delete_order(request, id):
         if duration.total_seconds() > (24*3600):
             messages.error(request, "Orders cannot be canceled after 24 hours !")
             return redirect('dashboard')
-        order.delete()
         messages.success(request, "Order Canceled successfully.")
+        UserDict={"firstname":order.first_name, "lastname":order.last_name, "email":order.email, "username":"", "servicetitle":order.title}
+        r=requests.post('http://localhost:8080/cancelbook', json=UserDict)
+        order.delete()
         return redirect('dashboard')
     except:
         raise

@@ -1,10 +1,15 @@
+import random
 from re import T
+import string
+from time import sleep
 from django.shortcuts import redirect, render
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from orders.models import Order
 from .models import Vendor
 from services.models import Service
+import requests
+import json
 
 # Create your views here.
 
@@ -48,6 +53,8 @@ def register(request):
                     user = User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username, password=password)
                     user.save()
                     messages.success(request, 'You are registerd successfully! ')
+                    UserDict={"firstname":firstname, "lastname":lastname, "email":email, "username":username, "servicetitle":""}
+                    r=requests.post('http://localhost:8080/register', json=UserDict)
                     if is_vendor:
                         vendor = Vendor.objects.create(user=user, service_type=service_type)
                         vendor.save()
@@ -151,7 +158,30 @@ def delete_profile(request):
             user = User.objects.get(id=request.user.id)
             user.delete()
             messages.success(request, "Profile deleted successfully.")
+            UserDict={"firstname":user.first_name, "lastname":user.last_name, "email":user.email, "username":user.username, "servicetitle":""}
+            # print(UserDict)
+            r=requests.post('http://localhost:8080/delete', json=UserDict)
             return redirect('home')
         except:
             messages.error(request, "Failed to Delete Profile")
             return redirect('profile')
+        
+def resetpwd(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        emails = User.objects.values_list('email', flat=True)
+        if email in emails:
+            password = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            user=User.objects.get(email=email)
+            user.set_password(password)
+            auth.login(request, user)
+            user.save()
+            messages.success(request, "Password reset successfully. Check email.")
+            UserDict={"firstname":user.first_name, "lastname":user.last_name, "email":user.email, "username":user.username, "servicetitle":password}
+            r=requests.post('http://localhost:8080/resetpwd', json=UserDict)
+            return redirect('login')
+        else:
+            messages.error(request, "Email id not found!")
+            return redirect('resetpwd')
+    else:
+        return render(request, 'accounts/resetpwd.html')

@@ -1,0 +1,29 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "password": "sparsh",
+            "username": "postgres",
+            "database": "weddify",
+            "name": "weddify"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "xprotocol"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 33060,
+            "driver": "MySQL",
+            "name": "HRM",
+            "username": "mysql",
+            "database": "qwerty",
+            "password": "Azadnagar@31",
+            "connectionTimeout": 30
+        }
+    ]
+}
