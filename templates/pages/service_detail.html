@@ -148,9 +148,9 @@
                 <div class="sidebar-right">
                     <div class="widget advanced-search d-none-992">
                         {% if user.is_authenticated %}
-                        <button class="btn btn-outline-danger bomd btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Book Now !</button>
+                        <button class="btn btn-outline-danger bomd btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Book Now!</button>
                         {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-outline-danger bomd btn-block btn-l">Login to Book  !</a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-danger bomd btn-block btn-l">Login to Book!</a>
                         {% endif %}
                         <br>
                         <h3 class="sidebar-title">Service Details</h3>
@@ -175,14 +175,14 @@
                     </div>
 
                     <div class="modal fade" id="inquiryModal" role="dialog">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="contact-dealer modal-header">
-                            <button type="button" class="close" data-dismiss="modal">
-                              <span>&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="contact-dealer modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
                             <form action="{% url 'payment' %}" method="POST">
                                 {% include 'includes/messages.html' %}
                                 {% csrf_token %}
@@ -194,55 +194,17 @@
                                 {% endif %}
                                 <input type="hidden" name="service_id" value="{{single_service.id}}">
                                 <div class="form-group">
-                                  <label for="name" class="col-form-label">Personal Information</label>
+                                  <h5>Personal Information</h5>
                                   <div class="row">
                                     <div class="col">
+                                        <label>First Name</label>
                                       <input type="text" name="first_name" class="form-control" {% if user.is_authenticated %} value="{{user.first_name}}" {% endif %}  readonly>
                                     </div>
                                     <div class="col">
+                                        <label>Last Name</label>
                                       <input type="text" name="last_name" class="form-control" {% if user.is_authenticated %} value="{{user.last_name}}"  {% endif %} readonly>
                                     </div>
                                   </div>
-                                </div>
-                                <div class="form-group">
-                                  <input type="text" name="title" class="form-control" value="{{single_service.title}}" readonly>
-                                </div>
-
-                                <div class="form-group">
-                                  <label for="name" class="col-form-label">I live in</label>
-                                  <div class="row">
-                                    <div class="col">
-                                      <input type="text" name="city" class="form-control" placeholder="City" required>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" name="state" class="form-control" placeholder="State" required>
-                                      </div>
-                                  </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="name" class="col-form-label">Booking Information</label>
-                                    <div class="row">
-                                      <div class="col">
-                                        <input type="date" name="event_date" class="form-control" required>
-                                        <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
-
-<script>
-$(function() {
-  $('input[name="daterange"]').daterangepicker({
-    opens: 'left'
-  }, function(start, end, label) {
-    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-  });
-});
-</script>
-                                      </div>
-                                      <div class="col">
-                                          <input type="text" name="amount" class="form-control" placeholder="Amount" value="{{single_service.featured_package_price}}" required readonly>
-                                        </div>
-                                    </div>
-                                  </div>
-                                <div class="form-group">
                                   <div class="row">
                                     <div class="col">
                                         <label for="name" class="col-form-label">Email Address</label>
@@ -255,6 +217,38 @@ $(function() {
                                   </div>
                                 </div>
                                 <hr>
+                                <div class="form-group">
+                                    <h5>Booking Information</h5>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Service Name</label>
+                                            <input type="text" name="title" class="form-control" value="{{single_service.title}}" readonly>
+                                          </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Booking From</label>
+                                            <input type="date" name="start_date" class="form-control" required>
+                                        </div>
+                                        <div class="col">
+                                            <label>Booking Till</label>
+                                            <input type="date" name="end_date" class="form-control" required>
+                                            <p>Select same date for one-day event</p>
+                                        </div>
+                                    </div>
+                                    {% if single_service.service_type == 'Venue' or single_service.service_type == 'Caterer' %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Number of Guests</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" name="guests" class="form-control" placeholder=0 required>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                </div>
+                                <!-- <hr>
                                 <center style="color: green;"> Card Details </center>
                                 <br>
                                 <div class="form-group">
@@ -275,8 +269,8 @@ $(function() {
                                       </div>
                                     </div>
                                   </div>
-                                <hr>
-                                <input type="submit" value="Make Payment" class="btn btn-block btn-danger">
+                                <hr> -->
+                                <input type="submit" value="Make Payment" class="btn btn-outline-danger bomd btn-block btn-lg">
                             </form>
                           </div>
                         </div>

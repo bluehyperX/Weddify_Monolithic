@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Email</title>
+</head>
+<body>
+<div style="margin-top: 10px">Congratulations, <b th:text="${user.firstname}"></b></div>
+<br>
+<div>Your service <b th:text="${user.servicetitle}"></b> has been booked succesfully by <b th:text="${user.username}"></b>. <p>Kindly check dashboard for more details.</p></div>
+<br/>
+<div> Hope to see you again. Have a nice day.</div>
+</body>
+</html>

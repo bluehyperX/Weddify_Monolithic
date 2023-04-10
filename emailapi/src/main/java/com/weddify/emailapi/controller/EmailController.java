@@ -45,11 +45,35 @@ public class EmailController {
         
     }
 
+    @PostMapping("/bookvendor")
+    public void BookEmailVendor(@RequestBody User user){
+        
+        try {
+            this.EmailService.sendEmail(user, "BookingEmailVendor");
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+
     @PostMapping("/cancelbook")
     public void BookCancelEmail(@RequestBody User user){
         
         try {
             this.EmailService.sendEmail(user, "BookingCancelEmail");
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+
+    @PostMapping("/cancelbookvendor")
+    public void BookCancelEmailVendor(@RequestBody User user){
+        
+        try {
+            this.EmailService.sendEmail(user, "BookingCancelEmailVendor");
         } catch (MessagingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
