@@ -42,7 +42,7 @@
                     <div id="carDetailsSlider" class="carousel service-details-sliders slide mb-40">
                         <div class="carousel-inner">
                             <div class="active item carousel-item" data-slide-number="0">
-                                <img src="{{ single_service.service_photo.url }}" class="img-fluid" alt="slider-service">
+                                <img src="{{ single_service.service_photo_0.url }}" class="img-fluid" alt="slider-service">
                             </div>
                             {% if single_service.service_photo_1 %}
                             <div class="item carousel-item" data-slide-number="1">
@@ -69,7 +69,7 @@
                             <ul class="carousel-indicators service-properties list-inline nav nav-justified">
                                 <li class="list-inline-item active">
                                     <a id="carousel-selector-0" class="selected" data-slide-to="0" data-target="#carDetailsSlider">
-                                        <img src="{{ single_service.service_photo.url }}" class="img-fluid" alt="small-service">
+                                        <img src="{{ single_service.service_photo_0.url }}" class="img-fluid" alt="small-service">
                                     </a>
                                 </li>
                                 {% if single_service.service_photo_1 %}

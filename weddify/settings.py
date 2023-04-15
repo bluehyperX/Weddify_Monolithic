@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'services.apps.ServicesConfig',
     'orders.apps.OrdersConfig',
+    'emailapi.apps.EmailapiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -85,7 +86,23 @@ DATABASES = {
         'PASSWORD': 'sparsh',
         'HOST': 'localhost',
         'PORT' : '5432',
-    }
+    },
+    'services': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'weddify_services',
+        'USER': 'postgres',
+        'PASSWORD': 'sparsh',
+        'HOST': 'localhost',
+        'PORT' : '5432',
+    },
+    'orders': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'weddify_orders',
+        'USER': 'postgres',
+        'PASSWORD': 'sparsh',
+        'HOST': 'localhost',
+        'PORT' : '5432',
+    },
 }
 
 # Password validation
@@ -109,32 +126,40 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+
+
+#RabbitMQ
+RABBITMQ_HOST = 'localhost'
+RABBITMQ_PORT = 5672
+RABBITMQ_USER = 'guest'
+RABBITMQ_PASSWORD = 'guest'
+RABBITMQ_VHOST = '/'
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+
+# #static
 STATIC_URL = '/static/'
-
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR,'static'),
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 #media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+# DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+# DROPBOX_OAUTH2_TOKEN = 'sl.BcbmCfngSOOZ0m6m-iTSFC2r1L_EZeLa2AyWjwRG6BGnemxSFW7a2Akwa0DpjQH3op3Ymcmg7pWRtdPQQoYSbPGm9oFx2Mu3j2V_xBueAFbHPJowfVqQgRhY4OxOBSQQJP4YhDM'
+# DROPBOX_ROOT_PATH = '/Apps/Weddify/'
 
 
 #messages 
@@ -148,3 +173,17 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    }
+}

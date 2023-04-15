@@ -39,9 +39,9 @@
                             <th scope="col">Service Name</th>
                             <th scope="col">Customer</th>
                             <th scope="col">Phone</th>
-                            <th scope="col">Location</th>
+                            <th scope="col">Event Start Date</th>
+                            <th scope="col">Event End Date</th>
                             <th scope="col">Amount</th>
-                            <th scope="col">Event Date</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -51,10 +51,10 @@
                             <td>{{ payment.title }}</td>
                             <td>{{ payment.user.username }}</td>
                             <td>{{ payment.phone }}</td>
-                            <td>{{ payment.city}}</td>
+                            <td>{{ payment.start_date.date}}</td>
+                            <td>{{ payment.end_date.date}}</td>
                             <td>₹{{ payment.amount | intcomma }}</td>
-                            <td>{{ payment.event_date.date}}</td>
-                            <td><a href="{% url 'delete_order' payment.id %}" class="btn btn-outline-dark">Cancel</a></td>
+                            <td><form method="POST" action="{% url 'delete_order' payment.id %}"><button type="submit" class="btn btn-outline-dark">Cancel</button></form></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -63,6 +63,93 @@
                 <h4> You have no booking history !</h4>
                 {% endif %}
             </div>
+
+            <!-- <div class="featured-service content-area-5"> -->
+                <div class="container">
+                    <div class="main-title">
+                        <h1>Existing <span>Services</span></h1>       
+                    </div>
+                    <div class="slick-slider-area clearfix">
+                        <div class="row slick-carousel"
+                            data-slick='{"slidesToShow": 3, "responsive":[{"breakpoint": 1024,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}}]}'>
+                            
+                            {% for services in their_services %}
+                            <div class="slick-slide-item">
+                                <div class="service-box-3">
+                                    <div class="service-thumbnail">
+                                        <a href="#" class="service-img">
+                                            <div class="price-box">
+                                                <span>₹{{ services.featured_package_price | intcomma }} </span>
+                                            </div>
+                                            <img class="d-block w-100" src="{{ services.service_photo_0.url }}" alt=""
+                                                height="262px">
+                                        </a>
+                                        <div class="servicebox-overlap-wrapper">
+                                            <div class="overlap-box">
+                                                <div class="overlap-btns-area">
+                                                    <div class="service-magnify-gallery">
+                                                        {% if services.service_photo_1 %}
+                                                        <a href="{{ services.service_photo_1.url }}" class="overlap-btn">
+                                                            <i class="fa fa-expand"></i>
+                                                            <img class="hidden" src="{{ services.service_photo_1.url }}">
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if services.service_photo_2 %}
+                                                        <a href="{{ services.service_photo_2.url }}" class="hidden">
+                                                            <img class="hidden" src="{{ services.service_photo_2.url }}">
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if services.service_photo_3 %}
+                                                        <a href="{{ services.service_photo_3.url }}" class="hidden">
+                                                            <img class="hidden" src="{{ services.service_photo_3.url }}">
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if services.service_photo_4 %}
+                                                        <a href="{{ services.service_photo_4.url }}" class="hidden">
+                                                            <img class="hidden" src="{{ services.service_photo_4.url }}">
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="detail" style="align-content: center;">
+                                        <h1 class="title">
+                                            <a style="align-content: center;" href="{% url 'service_detail' services.id %}">{{ services.title }}</a>
+                                        </h1>
+                                        <div class="title">
+                                            <div class="send-btn text-center">
+                                                <form method="POST" action="{% url 'delete_service' services.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-md delete-button-theme">Delete</button></form>
+                                            </div>
+                                        </div>
+                                        <ul class="facilities-list clearfix">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="send-btn text-center">
+                            <button class="btn btn-md update-button-theme" onclick="toggleAddService()">Add New</button>
+                        </div>
+                        <br>
+                        <div class="slick-btn">
+                            <div class="slick-prev slick-arrow-buton sab-4">
+                                <i class="fa fa-angle-left"></i>
+                            </div>
+                            <div class="slick-next slick-arrow-buton sab-3">
+                                <i class="fa fa-angle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- </div> -->
+            <br>
+            
+        <div id="add-service" style="display: none;">
             <div class="main-title text-center">
                 <h1>Add <span>Service</span></h1>
                 <p>Kindly enter your business details to add your services.</p>
@@ -72,9 +159,9 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row">
-
+            
                             <input type="hidden" name="vendor_id" class="form-control" value="{{user.id}}" required>
-
+            
                             <div class="col-md-6 text-left">
                                 <div class="form-group name">
                                     <input type="text" name="title" class="form-control" placeholder="Title" required>
@@ -107,21 +194,20 @@
                                     </select>
                                 </div>
                             </div>
-
-
+            
+            
                             <div class="col-md-6 text-left">
                                 <div class="form-group name">
-                                    <input type="file" name="service_photo" class="form-control" required>
-                                    <input type="file" name="service_photo_1" class="form-control" required>
-                                    <input type="file" name="service_photo_2" class="form-control" required>
-                                    <input type="file" name="service_photo_3" class="form-control" required>
-                                    <input type="file" name="service_photo_4" class="form-control" required>
+                                    <input type="file" name="service_photo_0" class="form-control" required>
+                                    <input type="file" name="service_photo_1" class="form-control">
+                                    <input type="file" name="service_photo_2" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6 text-left">
                                 <div class="form-group name">
-                                    <input type="text" name="featured_package_price" class="form-control"
-                                        placeholder="Price" required>
+                                    <input type="text" name="featured_package_price" class="form-control" placeholder="Price" required>
+                                    <input type="file" name="service_photo_3" class="form-control">
+                                    <input type="file" name="service_photo_4" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -155,10 +241,10 @@
                         <tr>
                             <th scope="col">Service Name</th>
                             <th scope="col">Vendor</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Amount</th>
                             <th scope="col">Booking Date</th>
-                            <th scope="col">Event Date</th>
+                            <th scope="col">Event Start Date</th>
+                            <th scope="col">Event End Date</th>
+                            <th scope="col">Amount</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -167,11 +253,13 @@
                         <tr>
                             <td>{{ payment.title }}</td>
                             <td>{{ payment.vendor.username }}</td>
-                            <td>{{ payment.city}}</td>
-                            <td>₹{{ payment.amount | intcomma }}</td>
                             <td>{{ payment.created_date.date}}</td>
-                            <td>{{ payment.event_date.date}}</td>
-                            <td><a href="{% url 'delete_order' payment.id %}" class="btn btn-outline-dark">Cancel</a></td>
+                            <td>{{ payment.start_date.date}}</td>
+                            <td>{{ payment.end_date.date}}</td>
+                            <td>₹{{ payment.amount | intcomma }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'delete_order' payment.id %}"><button type="submit" class="btn btn-outline-dark">Cancel</button></form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -184,4 +272,33 @@
         {% endif %}
     </div>
 </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    function toggleAddService() {
+        console.log("Hello!");
+        var div = document.getElementById("add-service");
+        // var div1 = document.getElementById("modify-service");
+        // div1.style.display = "none";
+        if (div.style.display === "none") {
+        div.style.display = "block";
+        } else {
+        div.style.display = "none";
+        }
+    }
+    // function toggleModifyService(id) {
+    //     console.log(id);
+    //     {% with service_id=id %}
+    //     var div1 = document.getElementById("add-service");
+    //     var div = document.getElementById("modify-service");
+    //     div1.style.display = "none";
+    //     if (div.style.display === "none") {
+    //     div.style.display = "block";
+    //     } else {
+    //     div.style.display = "none";
+    //     }
+    //     {% endwith %}
+    // }
+</script>
 {% endblock %}

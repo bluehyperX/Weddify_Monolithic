@@ -3,6 +3,7 @@ from datetime import datetime
 
 # Create your models here.
 class Order(models.Model):
+    id = models.BigAutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -15,6 +16,10 @@ class Order(models.Model):
     user_id = models.IntegerField(default=1)
     amount = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=datetime.now, blank=True)
+
+    class Meta:
+        app_label = 'orders'
+        db_table = 'orders'
 
     def __str__(self):
         return self.first_name

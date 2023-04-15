@@ -30,7 +30,7 @@ class Service (models.Model):
     city = models.CharField(max_length=50)
     state = models.CharField(choices=state_choice, max_length=100)
     featured_package_price = models.IntegerField()
-    service_photo = models.FileField(upload_to='photos/%y/%m/%d/')
+    service_photo_0 = models.FileField(upload_to='photos/%y/%m/%d/')
     service_photo_1 = models.FileField(upload_to='photos/%y/%m/%d/', blank=True)
     service_photo_2 = models.FileField(upload_to='photos/%y/%m/%d/', blank=True)
     service_photo_3 = models.FileField(upload_to='photos/%y/%m/%d/', blank=True)
@@ -39,6 +39,10 @@ class Service (models.Model):
     other_details = RichTextField()
     is_featured = models.BooleanField(default=True)
     created_date = models.DateTimeField(default=datetime.now, blank=True)
+
+    class Meta:
+        app_label = 'services'
+        db_table = 'services'
 
     def __str__(self):
         return self.title

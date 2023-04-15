@@ -1,19 +1,16 @@
 import random
 from re import T
 import string
-from time import sleep
 from django.shortcuts import redirect, render
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from orders.models import Order
+from rabbitmq import email_delete, email_register, email_resetpwd
 from .models import Vendor
 from services.models import Service
-import requests
 import json
 
 # Create your views here.
-
-
 
 def login(request):
     if request.method == 'POST':
@@ -27,7 +24,7 @@ def login(request):
             messages.success(request, 'You are logged in.')
             return redirect('dashboard')
         else:
-            messages.error(request, 'Something went wrong !')
+            messages.error(request, 'Invalid username and password combination!')
             return redirect('login')
     return render(request, 'accounts/login.html')
 
@@ -53,8 +50,10 @@ def register(request):
                     user = User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username, password=password)
                     user.save()
                     messages.success(request, 'You are registerd successfully! ')
+
                     UserDict={"firstname":firstname, "lastname":lastname, "email":email, "username":username, "servicetitle":""}
-                    r=requests.post('http://localhost:8080/register', json=UserDict)
+                    email_register(json.dumps(UserDict))
+
                     if is_vendor:
                         vendor = Vendor.objects.create(user=user, service_type=service_type)
                         vendor.save()
@@ -65,8 +64,6 @@ def register(request):
             return redirect('register')
     else:
         return render(request, 'accounts/register.html')
-    
-
 
 def dashboard(request):
     vendors = Vendor.objects.filter(user=request.user.id)
@@ -74,10 +71,18 @@ def dashboard(request):
     if vendors:
         is_vendor = True
         vendor = vendors[0]
+        their_services = Service.objects.order_by('-created_date').filter(vendor_id=request.user.id)
         payments = Order.objects.order_by('-created_date').filter(vendor_id=request.user.id)
         for payment in payments:
             user = User.objects.get(id=payment.user_id)
             setattr(payment, 'user', user)
+        data = {
+            'payments' : payments,
+            'is_vendor': is_vendor,
+            'states' : states,
+            'vendor' : vendor,
+            'their_services' : their_services,
+        }
     else:
         is_vendor = False
         vendor = None
@@ -85,12 +90,12 @@ def dashboard(request):
         for payment in payments:
             vendor = User.objects.get(id=payment.vendor_id)
             setattr(payment, 'vendor', vendor)
-    data = {
-        'payments' : payments,
-        'is_vendor': is_vendor,
-        'states' : states,
-        'vendor' : vendor,
-    }
+        data = {
+            'payments' : payments,
+            'is_vendor': is_vendor,
+            'states' : states,
+            'vendor' : vendor,
+        }
     return render(request, 'accounts/dashboard.html', data)
 
 def profile(request):
@@ -103,7 +108,7 @@ def profile(request):
         for payment in payments:
             user = User.objects.get(id=payment.user_id)
             setattr(payment, 'user', user)
-            payment.amount = payment.amount*0.9
+            payment.amount = payment.amount
     else:
         is_vendor = False
         vendor = None
@@ -157,10 +162,10 @@ def delete_profile(request):
         try:
             user = User.objects.get(id=request.user.id)
             user.delete()
-            messages.success(request, "Profile deleted successfully.")
+            # messages.success(request, "Profile deleted successfully.")
+
             UserDict={"firstname":user.first_name, "lastname":user.last_name, "email":user.email, "username":user.username, "servicetitle":""}
-            # print(UserDict)
-            r=requests.post('http://localhost:8080/delete', json=UserDict)
+            email_delete(json.dumps(UserDict))
             return redirect('home')
         except:
             messages.error(request, "Failed to Delete Profile")
@@ -177,8 +182,9 @@ def resetpwd(request):
             auth.login(request, user)
             user.save()
             messages.success(request, "Password reset successfully. Check email.")
+
             UserDict={"firstname":user.first_name, "lastname":user.last_name, "email":user.email, "username":user.username, "servicetitle":password}
-            r=requests.post('http://localhost:8080/resetpwd', json=UserDict)
+            email_resetpwd(json.dumps(UserDict))
             return redirect('login')
         else:
             messages.error(request, "Email id not found!")

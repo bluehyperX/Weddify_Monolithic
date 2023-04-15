@@ -2517,6 +2517,12 @@ input[type=checkbox]:checked + label:before {
     overflow: hidden;
 }
 
+.service-box {
+    position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
 .service-box-3:hover{
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
@@ -4934,6 +4940,7 @@ footer {
 }
 
 .content-area-5 {
+    background: rgba(0, 0, 0, 0.04) url(../img/bg-img-6.jpg) top left repeat;
     padding: 100px 0;
 }
 
@@ -5087,6 +5094,7 @@ footer {
 
 /** Contact-section start **/
 .contact-section {
+    background: rgba(0, 0, 0, 0.04) url(../img/bg-img-6.jpg) top left repeat;
     min-height: 100vh;
     position: relative;
     display: flex;
