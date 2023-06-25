@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
-from tkinter.tix import Tree
+# from tkinter.tix import Tree
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'services.apps.ServicesConfig',
     'orders.apps.OrdersConfig',
-    'emailapi.apps.EmailapiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,31 +77,43 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'weddify.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'weddify',
+#         'USER': 'postgres',
+#         'PASSWORD': 'sparsh',
+#         'HOST': 'localhost',
+#         'PORT' : '5432',
+#     },
+#     'services': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'weddify_services',
+#         'USER': 'postgres',
+#         'PASSWORD': 'sparsh',
+#         'HOST': 'localhost',
+#         'PORT' : '5432',
+#     },
+#     'orders': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'weddify_orders',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT' : '5432',
+#     },
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'weddify',
+        'HOST': 'db',
+        'PORT': '5432',
+        'NAME': 'app',
         'USER': 'postgres',
-        'PASSWORD': 'sparsh',
-        'HOST': 'localhost',
-        'PORT' : '5432',
-    },
-    'services': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'weddify_services',
-        'USER': 'postgres',
-        'PASSWORD': 'sparsh',
-        'HOST': 'localhost',
-        'PORT' : '5432',
-    },
-    'orders': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'weddify_orders',
-        'USER': 'postgres',
-        'PASSWORD': 'sparsh',
-        'HOST': 'localhost',
-        'PORT' : '5432',
-    },
+        'PASSWORD': 'postgres',
+        'ATOMIC_REQUESTS': True,
+    }
 }
 
 # Password validation
@@ -134,10 +145,10 @@ USE_TZ = True
 
 
 #RabbitMQ
-RABBITMQ_HOST = 'localhost'
+RABBITMQ_HOST = 'rabbit'
 RABBITMQ_PORT = 5672
-RABBITMQ_USER = 'guest'
-RABBITMQ_PASSWORD = 'guest'
+RABBITMQ_USER = 'admin'
+RABBITMQ_PASSWORD = 'admin'
 RABBITMQ_VHOST = '/'
 
 

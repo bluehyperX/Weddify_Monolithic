@@ -1,9 +1,0 @@
-from django.apps import AppConfig
-
-
-class EmailapiConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'emailapi'
-
-    def ready(self):
-        import emailapi.signals

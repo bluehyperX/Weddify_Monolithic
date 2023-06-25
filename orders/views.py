@@ -96,7 +96,6 @@ def delete_order(request, id):
             if duration.total_seconds() > (24*3600):
                 messages.error(request, "Orders cannot be canceled after 24 hours!")
                 return redirect('dashboard')
-            messages.success(request, "Order Canceled successfully.")
 
             UserDict={"firstname":order.first_name, "lastname":order.last_name, "email":order.email, "username":"", "servicetitle":order.title}
             email_cancelbook(json.dumps(UserDict))
@@ -105,6 +104,7 @@ def delete_order(request, id):
             email_cancelbookvendor(json.dumps(UserDict))
 
             order.delete()
+            messages.success(request, "Order Canceled successfully.")
             return redirect('dashboard')
         except:
             raise

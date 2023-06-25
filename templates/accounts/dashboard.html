@@ -54,7 +54,9 @@
                             <td>{{ payment.start_date.date}}</td>
                             <td>{{ payment.end_date.date}}</td>
                             <td>₹{{ payment.amount | intcomma }}</td>
-                            <td><form method="POST" action="{% url 'delete_order' payment.id %}"><button type="submit" class="btn btn-outline-dark">Cancel</button></form></td>
+                            <td><form method="POST" action="{% url 'delete_order' payment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-dark">Cancel</button></form></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -120,9 +122,12 @@
                                         </h1>
                                         <div class="title">
                                             <div class="send-btn text-center">
-                                                <form method="POST" action="{% url 'delete_service' services.id %}">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-md delete-button-theme">Delete</button></form>
+                                                <div class="row" style="justify-content: space-around;">
+                                                    <button class="btn btn-md update-button-theme" onclick="toggleModifyService({{ services.id }})">Update</button>
+                                                    <form method="POST" action="{% url 'delete_service' services.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-md delete-button-theme">Delete</button></form>
+                                                </div>
                                             </div>
                                         </div>
                                         <ul class="facilities-list clearfix">
@@ -232,6 +237,91 @@
                 </div>
             </form>
         </div>
+
+        <div id="modify-service" style="display: none;">
+            <div class="main-title text-center">
+                <h1>Modify <span>Service</span></h1>
+                <p>Kindly enter new details to update your services.</p>
+            </div>
+            <form method="POST" action="{% url 'update_service' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+            
+                            <input type="hidden" name="vendor_id" class="form-control" value="{{user.id}}" required>
+                            <input type="hidden" name="service_id" class="form-control" id="service_id" placeholder="ID" required>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="text" name="title" class="form-control" placeholder="Title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group email">
+                                    <input type="text" name="service_type" class="form-control"
+                                        value="{{vendor.service_type}}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group city">
+                                    <input type="text" name="city" class="form-control" placeholder="City" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group">
+                                    <select class="form-control search-fields" name="state">
+                                        <option selected="true" disabled="disabled">Select State </option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Maharastra">Maharastra</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+            
+            
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="file" name="service_photo_0" class="form-control" required>
+                                    <input type="file" name="service_photo_1" class="form-control">
+                                    <input type="file" name="service_photo_2" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <div class="form-group name">
+                                    <input type="text" name="featured_package_price" class="form-control" placeholder="Price" required>
+                                    <input type="file" name="service_photo_3" class="form-control">
+                                    <input type="file" name="service_photo_4" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group message">
+                                    <textarea class="form-control" name="description"
+                                        placeholder="Write description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group message">
+                                    <textarea class="form-control" name="other_details"
+                                        placeholder="Write other details"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="send-btn text-center">
+                                    <button type="submit" class="btn btn-md button-theme">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         {% else %}
         <div class="container mt-50 mb-50">
             <div class="main-title text-center"><h1>Booking <span>History</span></h1></div>
@@ -258,7 +348,9 @@
                             <td>{{ payment.end_date.date}}</td>
                             <td>₹{{ payment.amount | intcomma }}</td>
                             <td>
-                                <form method="POST" action="{% url 'delete_order' payment.id %}"><button type="submit" class="btn btn-outline-dark">Cancel</button></form>
+                                <form method="POST" action="{% url 'delete_order' payment.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-dark">Cancel</button></form>
                             </td>
                         </tr>
                         {% endfor %}
@@ -278,27 +370,43 @@
 <script>
     function toggleAddService() {
         console.log("Hello!");
-        var div = document.getElementById("add-service");
-        // var div1 = document.getElementById("modify-service");
-        // div1.style.display = "none";
-        if (div.style.display === "none") {
-        div.style.display = "block";
+        var add = document.getElementById("add-service");
+        var modify = document.getElementById("modify-service");
+        if (add.style.display === "none") {
+            if (modify.style.display === "block") {
+                modify.style.display = "none";
+                add.style.display = "block";
+                add.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+            } else {
+                add.style.display = "block";
+                add.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+            }
         } else {
-        div.style.display = "none";
+            add.style.display = "none";
         }
     }
-    // function toggleModifyService(id) {
-    //     console.log(id);
-    //     {% with service_id=id %}
-    //     var div1 = document.getElementById("add-service");
-    //     var div = document.getElementById("modify-service");
-    //     div1.style.display = "none";
-    //     if (div.style.display === "none") {
-    //     div.style.display = "block";
-    //     } else {
-    //     div.style.display = "none";
-    //     }
-    //     {% endwith %}
-    // }
+    function toggleModifyService(id) {
+        console.log("ID",id);
+        var add = document.getElementById("add-service");
+        var modify = document.getElementById("modify-service");
+        var sid = document.getElementById("service_id");
+        if (modify.style.display === "none"){
+            if (add.style.display === "block") {
+                add.style.display = "none";
+                modify.style.display = "block";
+                modify.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+                sid.value=id;
+                console.log("Service ID",sid);
+            } else {
+                modify.style.display = "block";
+                modify.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+                sid.value=id;
+                console.log("Service ID",sid);
+            }
+        } else {
+            modify.style.display = "none";
+        } 
+        
+    }
 </script>
 {% endblock %}

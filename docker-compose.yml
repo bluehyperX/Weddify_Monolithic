@@ -1,0 +1,108 @@
+# version: '3'
+
+# services:
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     ports:
+#       - 15672:15672
+#       - 5672:5672
+
+#   django:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8000:8000
+#     volumes:
+#       - .:/Weddify
+#     depends_on:
+#       - rabbitmq
+#     command: python manage.py runserver 0.0.0.0:8000
+
+#   emailapi:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-emailapi
+#     ports:
+#       - 8080:8080
+#     volumes:
+#       - .:/Weddify
+#     depends_on:
+#       - rabbitmq
+#     command: java -jar emailapi.jar
+
+version: "3"
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django
+    hostname: django
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/Weddify
+    command: >
+      sh -c "./wait-for db:5432 && ./wait-for rabbit:5672 &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+      - rabbit
+    networks:
+      - shared_network
+
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: rabbit
+    hostname: rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "5682:5672"
+      - "15682:15672"
+    networks:
+      - shared_network
+
+  emailapi:
+    build:
+      context: .
+      dockerfile: Dockerfile-emailapi
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/Weddify
+    command: >
+      sh -c "./wait-for django:8000 &&
+             java -jar emailapi.jar"
+    depends_on:
+      - django
+      - rabbit
+      - db
+    networks:
+      - shared_network
+
+  db:
+    image: postgres:10-alpine
+    container_name: db
+    hostname: db
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "54320:5432"
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    driver: bridge

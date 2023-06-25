@@ -32,14 +32,6 @@ def service_detail(request, id):
     }
     return render(request, 'pages/service_detail.html', data)
 
-# def service(request, id):
-#     single_service = get_object_or_404(Service, pk=id)
-#     data = {
-#         'single_service' : single_service,
-#         'service_id':id,
-#     }
-#     return render(request, 'accounts/dashboard.html', data)
-
 def add_service(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -82,9 +74,9 @@ def update_service(request):
         service_photo_4 = request.FILES['service_photo_4']
         description = request.POST['description']
         other_details = request.POST['other_details']
-
+        service_id = request.POST['service_id']
         try:
-            service = Service.objects.get(id=request.service.id)
+            service = Service.objects.get(id=service_id)
             service.title = title
             service.service_type = service_type
             service.vendor_id = vendor_id
@@ -98,14 +90,12 @@ def update_service(request):
             service.service_photo_4 = service_photo_4
             service.description = description
             service.other_details = other_details
-
-            messages.success(request, "Service Updated Successfully")
             service.save()
+            messages.success(request, "Service Updated Successfully")
             return redirect('dashboard')
         except:
             messages.error(request, "Failed to update Service")
-            return redirect('dashboard')
-        
+            return redirect('dashboard')     
 
 def delete_service(request, id):
     if request.method != "POST":
